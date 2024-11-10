@@ -1,0 +1,23 @@
+import imageio
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy import ndimage
+
+# Baca citra
+img = imageio.imread('/content/38b1bb49-0001-0004-0000-000000268500_w1200_r1_fpx4207_fpy5299_602d0ddd97461.jpg')
+
+# Hitung histogram
+hist, bins = np.histogram(img.flatten(), 256, [0, 256])
+
+# Hitung probabilitas kumulatif
+cdf = hist.cumsum()
+cdf_normalized = cdf * hist.max() / cdf.max()
+
+# Pemetaan ulang
+img_equalized = np.interp(img.flatten(), bins[:-1], cdf_normalized)
+img_equalized = img_equalized.reshape(img.shape)
+
+# Tampilkan hasil
+plt.subplot(121), plt.imshow(img, cmap='gray')
+plt.subplot(122), plt.imshow(img_equalized, cmap='gray')
+plt.show()
